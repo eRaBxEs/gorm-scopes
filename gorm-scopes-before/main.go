@@ -56,13 +56,17 @@ func CardOrders(db *gorm.DB) *gorm.DB { // returning this resusable piece of que
 	return db.Where("payment_mode = ?", "card")
 }
 
+func PriceGreaterThan30(db *gorm.DB) *gorm.DB {
+	return db.Where("price > ?", 30)
+}
+
 func main() {
 
 	connectDatabase()
 	dbMigrate()
 
 	var orders []Order
-	DB.Scopes(CardOrders).Find(&orders)
+	DB.Scopes(CardOrders, PriceGreaterThan30).Find(&orders) // add another argument to the scope function
 
 	// print the details
 	for _, order := range orders {
