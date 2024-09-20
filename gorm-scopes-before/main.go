@@ -60,6 +60,12 @@ func PriceGreaterThan30(db *gorm.DB) *gorm.DB {
 	return db.Where("price > ?", 30)
 }
 
+func UsersFromDomain(domain string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("email like ?", "%"+domain)
+	}
+}
+
 func main() {
 
 	connectDatabase()
@@ -71,6 +77,14 @@ func main() {
 	// print the details
 	for _, order := range orders {
 		fmt.Printf("Price: %d, Payment type: %s\n", order.Price, order.PaymentMode)
+	}
+
+	var users []User
+	DB.Scopes(UsersFromDomain("gmail.com")).Find(&users)
+
+	fmt.Printf("Users:\n")
+	for _, user := range users {
+		fmt.Printf("User email: %s\n", user.Email)
 	}
 
 }
